@@ -4,14 +4,28 @@ from PySide2.QtWidgets import QListWidget
 from PyPDF2 import PdfFileMerger, PdfFileReader
 from time import sleep
 from PyQt5.QtGui import QCursor, QMovie
+from PyQt5.QtMultimedia import QMediaPlayer, QMediaContent
+import os
+from PyQt5.QtCore import QUrl
+from pathlib import Path
 
+ICON = os.path.abspath("icons/icon.png")
+CROSSICON = os.path.abspath("icons/crossicon.png")
+CHECKMARK = os.path.abspath("icons/checkmark.jpg")
+PDF = os.path.abspath("icons/pdf.gif")
+
+# Loading icons' path to the constant variables.
+ICON = ICON.replace("\\", '/')
+CROSSICON = CROSSICON.replace("\\", '/')
+CHECKMARK = CHECKMARK.replace("\\", '/')
+PDF = PDF.replace('\\', '/')
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
         MainWindow.setFixedSize(800, 600)
         MainWindow.setWindowIcon(QtGui.QIcon(
-            "C:/Users/Emirhan Ese/VSC Projects/Python Projects/PDF Merger/UI/icons/icon.png"))
+            ICON))
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.centralwidget.setStyleSheet(
@@ -106,10 +120,11 @@ class Ui_MainWindow(object):
             """)
 
         self.movie = QMovie(
-            "C:/Users/Emirhan Ese/VSC Projects/Python Projects/PDF Merger/UI/icons/pdf.gif")
+            PDF)
         self.label2.setMovie(self.movie)
         self.movie.start()
         self.paths = []
+        self.player = QMediaPlayer()
 
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
@@ -173,7 +188,7 @@ class Ui_MainWindow(object):
             self.pushButton_2.setCursor(QCursor(QtCore.Qt.ArrowCursor))
 
     def saveTo(self):
-        path = QFileDialog.getSaveFileName(MainWindow, 'Save file to ...', 'C:/Users/Emirhan Ese/Downloads',
+        path = QFileDialog.getSaveFileName(MainWindow, 'Save file to ...', os.path.join(os.path.join(os.environ['USERPROFILE']), 'Desktop'),
                                            'PDF Files (*.pdf)', options=QFileDialog.DontUseNativeDialog)
         
         if path[0] != "":
@@ -246,7 +261,6 @@ class Ui_MainWindow(object):
         else:
             merger.write(path + ".pdf")
             
-        print("PDFs merged successfully!")
         self.completedMessage()
         self.listWidget.clear()
         self.paths.clear()
@@ -255,14 +269,14 @@ class Ui_MainWindow(object):
 
     def error(self):
         self.msg.setWindowIcon(QtGui.QIcon(
-            "C:/Users/Emirhan Ese/VSC Projects/Python Projects/PDF Merger/UI/icons/crossicon.png"))
+            CROSSICON))
         self.msg.setWindowTitle("Error !")
         self.msg.setText("You can only add PDF files.")
         self.msg.exec_()
         
     def completedMessage(self):
         self.msg.setWindowIcon(QtGui.QIcon(
-            "C:/Users/Emirhan Ese/VSC Projects/Python Projects/PDF Merger/UI/icons/checkmark.jpg"))
+            CHECKMARK))
         self.msg.setWindowTitle("Completed !")
         self.msg.setText("PDFs merged successfully.")
         self.msg.exec_()
